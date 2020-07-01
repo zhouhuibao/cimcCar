@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="layui/css/layui.css"/>
+		<style type="text/css">
+			p{
+				margin-bottom: 5px;
+			}
+			button{
+				margin-left: 10px;
+			}
+			.item{
+				margin: 10px 0 20px 0
+			}
+			
+			
+		</style>
+		<script src="layui/layui.all.js" type="text/javascript" charset="utf-8"></script>
+	</head>
+	<body>
+		<div class="layui-fluid">
+			<div class="item">
+				<p>创建账户</p>
+				<div class="layui-row">
+					<div class="layui-col-xs2">
+						<input type="text" name="" class="account layui-input" value="" placeholder="输入账户名" />
+					</div>
+					
+					<div class="layui-col-xs3">
+						<button type="button" name="createAccount" class="layui-btn">创建</button>
+					</div>
+				</div>
+				默认的推荐人为nathan
+				<hr>
+			</div>
+			
+			<div class="item">
+				<p>获取余额</p>
+				<div class="layui-row">
+					<div class="layui-col-xs2">
+						<input type="text" name="" class="user layui-input" value="" placeholder="输入用户" />
+					</div>
+					
+					<div class="layui-col-xs3">
+						<button type="button" name="getbalance" class=" layui-btn">获取</button>
+					</div>
+				</div>
+				<hr>
+			</div>
+			
+			<div class="item">
+				<p>获取账户信息</p>
+				<div class="layui-row">
+					<div class="layui-col-xs2">
+						<input type="text" name="" class="userInfo layui-input" value="" placeholder="输入用户" />
+					</div>
+					
+					<div class="layui-col-xs3">
+						<button type="button" name="getuserInfo" class=" layui-btn">获取</button>
+					</div>
+				</div>
+				<hr>
+			</div>
+			
+			<div class="item">
+				<p>转账</p>
+				<div class="layui-row">
+					<div class="layui-col-xs2">
+						<input type="text" name="" class="zzr layui-input" value="" placeholder="转账人" />
+					</div>
+					<div class="layui-col-xs2">
+						<input type="text" name="" class="skr layui-input" value="" placeholder="收款人" />
+					</div>
+					<div class="layui-col-xs2">
+						<input type="text" name="" class="je layui-input" value="" placeholder="金额" />
+					</div>
+					
+					<div class="layui-col-xs3">
+						<button type="button" name="TransactionBuilder" class=" layui-btn">提交</button>
+					</div>
+				</div>
+				<hr>
+			</div>
+			
+			<div class="item">
+				<div class="layui-row">
+					<div class="layui-col-xs3">
+						<button type="button" name="headBlockNumber" class="layui-btn">获取区块高度</button>
+					</div>
+				</div>
+				<hr>
+			</div>
+			
+			
+			
+		</div>
+		
+	</body>
+</html>
+
+<script type="text/javascript">
+	layui.use(['layer', 'form'], function(){
+	  var layer = layui.layer
+	  ,$ = layui.$;
+	  $("button").click(function(){
+	  	var data={}
+	  	
+	  	var type = $(this).attr('name')
+	  	data.method = type
+	  	switch (type){
+	  		case 'getbalance':
+	  			data.params = $(".user").val()
+	  			break;
+	  		case 'TransactionBuilder':
+				data.params={
+					to:$(".skr").val(),
+					amount:$(".je").val()
+				}
+	  			break;
+				
+			case 'getuserInfo':
+				data.params =$(".userInfo").val()
+				break;
+	  		case 'headBlockNumber':
+	  		
+	  			break;
+	  		case 'createAccount':
+	  			data.params = $(".account").val()
+				console.log(data.params.length)
+	  			if(data.params.length < 12){
+	  				layer.msg('不能低于12位');
+					return false
+	  			}
+	  			break;
+	  		
+	  		default:
+	  			break;
+	  	}
+	  	$.post('http://192.168.0.105:3000/home',data,function(res){
+	  		console.log(res)
+	  	})
+	  })
+	  
+	});
+	</script> 
+	
+	
+	
+	
+</script>
