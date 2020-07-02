@@ -49,6 +49,19 @@
 				</div>
 				<hr>
 			</div>
+			<div class="item">
+				<p>根据区块高度获取交易信息</p>
+				<div class="layui-row">
+					<div class="layui-col-xs2">
+						<input type="text" name="" class="height layui-input" value="" placeholder="输入区块高度" />
+					</div>
+					
+					<div class="layui-col-xs3">
+						<button type="button" name="getTransaction" class=" layui-btn">获取</button>
+					</div>
+				</div>
+				<hr>
+			</div>
 			
 			<div class="item">
 				<p>获取账户信息</p>
@@ -58,7 +71,7 @@
 					</div>
 					
 					<div class="layui-col-xs3">
-						<button type="button" name="getuserInfo" class=" layui-btn">获取</button>
+						<button type="button" name="getAccount" class=" layui-btn">获取</button>
 					</div>
 				</div>
 				<hr>
@@ -78,7 +91,7 @@
 					</div>
 					
 					<div class="layui-col-xs3">
-						<button type="button" name="TransactionBuilder" class=" layui-btn">提交</button>
+						<button type="button" name="transactionBuilder" class=" layui-btn">提交</button>
 					</div>
 				</div>
 				<hr>
@@ -104,6 +117,9 @@
 	layui.use(['layer', 'form'], function(){
 	  var layer = layui.layer
 	  ,$ = layui.$;
+	  
+	
+	  
 	  $("button").click(function(){
 	  	var data={}
 	  	
@@ -113,14 +129,18 @@
 	  		case 'getbalance':
 	  			data.params = $(".user").val()
 	  			break;
-	  		case 'TransactionBuilder':
+			case 'getTransaction':
+				data.params = $(".height").val()
+				break;
+				
+	  		case 'transactionBuilder':
 				data.params={
 					to:$(".skr").val(),
 					amount:$(".je").val()
 				}
 	  			break;
 				
-			case 'getuserInfo':
+			case 'getAccount':
 				data.params =$(".userInfo").val()
 				break;
 	  		case 'headBlockNumber':
@@ -129,16 +149,16 @@
 	  		case 'createAccount':
 	  			data.params = $(".account").val()
 				console.log(data.params.length)
-	  			if(data.params.length < 12){
-	  				layer.msg('不能低于12位');
-					return false
-	  			}
+	  		// 	if(data.params.length < 12){
+	  		// 		layer.msg('不能低于12位');
+					// return false
+	  		// 	}
 	  			break;
 	  		
 	  		default:
 	  			break;
 	  	}
-	  	$.post('http://192.168.0.105:3000/home',data,function(res){
+	  	$.post('http://192.168.0.108:3000',data,function(res){
 	  		console.log(res)
 	  	})
 	  })
