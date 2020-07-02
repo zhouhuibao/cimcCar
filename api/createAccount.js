@@ -21,6 +21,8 @@ const nathanKey = btsjs.PrivateKey.fromWif(nathanKeyWif);
 
 async function createAccount(req, res, next) {
     const {params} = req.body
+
+
     if(params.length < 12){
         res.send({
             content:'账户不能低于12位'
@@ -76,8 +78,16 @@ async function createAccount(req, res, next) {
             tr.add_signer(nathanKey, nathanKey.toPublicKey().toString());
             let accountResult = await tr.broadcast();
 
+            const keysAuths=accountResult[0].trx.operations[0][1]
+            const accountKey={
+                owner_key:keysAuths.owner.key_auths[0][0],
+                active_key:keysAuths.owner.key_auths[0][0],
+                memo_key:keysAuths.options.memo_key
+            }
+            console.log(accountKey)
+
             res.send({
-                content:accountResult,
+                content:accountKey
             })
         }else{
             res.send({

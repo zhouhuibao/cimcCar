@@ -62,6 +62,19 @@
 				</div>
 				<hr>
 			</div>
+			<div class="item">
+				<p>获取账户历史记录</p>
+				<div class="layui-row">
+					<div class="layui-col-xs2">
+						<input type="text" name="" class="history layui-input" value="" placeholder="输入账户" />
+					</div>
+					
+					<div class="layui-col-xs3">
+						<button type="button" name="getblockhash" class=" layui-btn">获取</button>
+					</div>
+				</div>
+				<hr>
+			</div>
 			
 			<div class="item">
 				<p>获取账户信息</p>
@@ -144,8 +157,12 @@
 				data.params =$(".userInfo").val()
 				break;
 	  		case 'headBlockNumber':
-	  		
+			
 	  			break;
+			case 'getblockhash':
+				data.params =$(".history").val()
+			
+				break;
 	  		case 'createAccount':
 	  			data.params = $(".account").val()
 				console.log(data.params.length)

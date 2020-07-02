@@ -7,6 +7,7 @@ const getAccount = require("../api/getAccount");
 const getHeadBlockNumber = require("../api/getHeadBlockNumber");
 const createAccount = require("../api/createAccount");
 const transactionBuilder = require("../api/transactionBuilder");
+const getBlockHash = require("../api/getBlockHash");
 
 // getuser('nathan').then(res=>{
 //     console.log(res,'账户信息')
@@ -16,7 +17,9 @@ function main(req,response,next){
 
     const {params,method} = req.body
 
+    console.log(req.body)
     console.log(method)
+    console.log(params)
 
     switch (method) {
         case 'getbalance': // 获取账户余额
@@ -37,6 +40,10 @@ function main(req,response,next){
         case 'transactionBuilder':  // 转账
                 transactionBuilder(req,response,next)
             break;
+        case 'getblockhash':  // 根据区块高度获取历史记录
+                getBlockHash(req,response,next)
+            break;
+
         default:
             response.send({
                 content:'方法不存在'

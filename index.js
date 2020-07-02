@@ -37,21 +37,21 @@ async function run() {
     }
 
     // Get transaction from a block.
-    {
-        // 获取最新不可逆块中的第一个事务（如果存在或有错误）。
-        const dgpo = await btsjsws.Apis.instance().db_api().exec("get_dynamic_global_properties", []);
-        console.log(dgpo)
-        try {
-            const tx = await btsjsws.Apis.instance().db_api().exec("get_transaction", [dgpo.last_irreversible_block_num, 0]);
-            console.log("不可逆发送：");
-            console.log(tx);
-        } catch (e) {
-            console.log("block " + dgpo.last_irreversible_block_num + " 不包含事务");
-            console.log(e);
-        }
-    }
+    // {
+    //     // 获取最新不可逆块中的第一个事务（如果存在或有错误）。
+    //     const dgpo = await btsjsws.Apis.instance().db_api().exec("get_dynamic_global_properties", []);
+    //     console.log(dgpo)
+    //     try {
+    //         const tx = await btsjsws.Apis.instance().db_api().exec("get_transaction", [dgpo.last_irreversible_block_num, 0]);
+    //         console.log("不可逆发送：");
+    //         console.log(tx);
+    //     } catch (e) {
+    //         console.log("block " + dgpo.last_irreversible_block_num + " 不包含事务");
+    //         console.log(e);
+    //     }
+    // }
 
-    return false
+    // return false
 
     // // 获取区块高度
     // {
@@ -89,87 +89,87 @@ async function run() {
 
     // Create registration transaction.
 
-    {
-        let tr = new btsjs.TransactionBuilder();
-        tr.add_type_operation("account_create", {
-            fee: {
-                amount: 0,
-                asset_id: 0
-            },
-            registrar: nathan.id,
-            referrer: nathan.id,
-            referrer_percent: 50,
-            name: testAccountName,
-            owner: {
-                weight_threshold: 1,
-                account_auths: [],
-                key_auths: [[testKeys.pubKeys.owner, 1]],
-                address_auths: []
-            },
-            active: {
-                weight_threshold: 1,
-                account_auths: [],
-                key_auths: [[testKeys.pubKeys.active, 1]],
-                address_auths: []
-            },
-            options: {
-                memo_key: testKeys.pubKeys.memo,
-                voting_account: "1.2.5",
-                num_witness: 0,
-                num_committee: 0,
-                votes: []
-            }
-        });
-        await Promise.all([tr.set_required_fees(), tr.update_head_block()]);
-        tr.add_signer(nathanKey, nathanKey.toPublicKey().toString());
-        const broadcastResult = await tr.broadcast();
-        console.log("registration broadcast result: 注册广播结果");
-        // console.log(broadcastResult);
-    }
+    // {
+    //     let tr = new btsjs.TransactionBuilder();
+    //     tr.add_type_operation("account_create", {
+    //         fee: {
+    //             amount: 0,
+    //             asset_id: 0
+    //         },
+    //         registrar: nathan.id,
+    //         referrer: nathan.id,
+    //         referrer_percent: 50,
+    //         name: testAccountName,
+    //         owner: {
+    //             weight_threshold: 1,
+    //             account_auths: [],
+    //             key_auths: [[testKeys.pubKeys.owner, 1]],
+    //             address_auths: []
+    //         },
+    //         active: {
+    //             weight_threshold: 1,
+    //             account_auths: [],
+    //             key_auths: [[testKeys.pubKeys.active, 1]],
+    //             address_auths: []
+    //         },
+    //         options: {
+    //             memo_key: testKeys.pubKeys.memo,
+    //             voting_account: "1.2.5",
+    //             num_witness: 0,
+    //             num_committee: 0,
+    //             votes: []
+    //         }
+    //     });
+    //     await Promise.all([tr.set_required_fees(), tr.update_head_block()]);
+    //     tr.add_signer(nathanKey, nathanKey.toPublicKey().toString());
+    //     const broadcastResult = await tr.broadcast();
+    //     console.log("registration broadcast result: 注册广播结果");
+    //     // console.log(broadcastResult);
+    // }
 
-    const testAccount = await btsjs.FetchChain("getAccount", testAccountName);
-    // console.log("test account:");
-    // console.log(testAccount);
+    // const testAccount = await btsjs.FetchChain("getAccount", testAccountName);
+    // // console.log("test account:");
+    // // console.log(testAccount);
 
-    // 转账
-    {
-        const nonce = btsjs.TransactionHelper.unique_nonce_uint64();
-        console.log("nonce: " + nonce);
+    // // 转账
+    // {
+    //     const nonce = btsjs.TransactionHelper.unique_nonce_uint64();
+    //     console.log("nonce: " + nonce);
 
-        const memo_object = {
-            from: nathanKey.toPublicKey().toString(),
-            to: testKeys.pubKeys.memo,
-            nonce: nonce,
-            message: btsjs.Aes.encrypt_with_checksum(
-                nathanKey,
-                testKeys.pubKeys.memo,
-                nonce,
-                "Some coins for test"
-            )
-        }
+    //     const memo_object = {
+    //         from: nathanKey.toPublicKey().toString(),
+    //         to: testKeys.pubKeys.memo,
+    //         nonce: nonce,
+    //         message: btsjs.Aes.encrypt_with_checksum(
+    //             nathanKey,
+    //             testKeys.pubKeys.memo,
+    //             nonce,
+    //             "Some coins for test"
+    //         )
+    //     }
 
-        let tr = new btsjs.TransactionBuilder();
-        tr.add_type_operation("transfer", {
-            fee: {
-                amount: 0,
-                asset_id: coreAsset.get("id")
-            },
-            from: nathan.id,
-            to: testAccount.get("id"),
-            amount: {
-                amount:101,
-                // amount: (BigInt(chainProperties.parameters.minimum_masternode_stake) + 100n * BigInt(precision)).toString(),
-                asset_id: coreAsset.get("id")
-            },
-            memo: memo_object
-        });
+    //     let tr = new btsjs.TransactionBuilder();
+    //     tr.add_type_operation("transfer", {
+    //         fee: {
+    //             amount: 0,
+    //             asset_id: coreAsset.get("id")
+    //         },
+    //         from: nathan.id,
+    //         to: testAccount.get("id"),
+    //         amount: {
+    //             amount:101,
+    //             // amount: (BigInt(chainProperties.parameters.minimum_masternode_stake) + 100n * BigInt(precision)).toString(),
+    //             asset_id: coreAsset.get("id")
+    //         },
+    //         memo: memo_object
+    //     });
 
-        await Promise.all([tr.set_required_fees(), tr.update_head_block()]);
-        tr.add_signer(nathanKey, nathanKey.toPublicKey().toString());
-        const broadcastResult = await tr.broadcast();
-        console.log("transfer broadcast result:  转账的结果");
-        console.log(broadcastResult);
-    }
+    //     await Promise.all([tr.set_required_fees(), tr.update_head_block()]);
+    //     tr.add_signer(nathanKey, nathanKey.toPublicKey().toString());
+    //     const broadcastResult = await tr.broadcast();
+    //     console.log("transfer broadcast result:  转账的结果");
+    //     console.log(broadcastResult);
+    // }
 
     //使用DB API获取测试帐户余额
     // {
@@ -178,11 +178,11 @@ async function run() {
     //     console.log(balances);
     // }
 
-    {
-        const num = await btsjsws.Apis.instance().db_api().exec("get_objects", [testAccountName, [coreAsset.get("id")]]);
-        console.log("区块高度");
-        console.log(num);
-    }
+    // {
+    //     const num = await btsjsws.Apis.instance().db_api().exec("get_objects", [testAccountName, [coreAsset.get("id")]]);
+    //     console.log("区块高度");
+    //     console.log(num);
+    // }
 
     // Apis.instance().db_api().exec('get_objects', [['1.2.17']]).then(r => {  // 2.1.0
     //     console.log(r)
@@ -271,22 +271,22 @@ async function run() {
     // }
 
     // 获取测试帐户历史记录。.
-    // {
-    //     const testHistory = await btsjs.ChainStore.fetchRecentHistory(testAccount);// btsjsws.Apis.instance().history_api().exec("get_account_history", [testAccountName]);
-    //     console.log("测试帐户最新历史记录：");
-    //     console.log(testHistory);
+    {
+        const testHistory = await btsjs.ChainStore.fetchRecentHistory(testAccount);// btsjsws.Apis.instance().history_api().exec("get_account_history", [testAccountName]);
+        console.log("测试帐户最新历史记录：");
+        console.log(testHistory);
 
-    //     if (testHistory.has("history")) {
-    //         for (const op of testHistory.get("history")) {
-    //             console.log("block " + op.get("block_num") + " tx " + op.get("trx_in_block") + " op " + op.get("op_in_trx"));
+        if (testHistory.has("history")) {
+            for (const op of testHistory.get("history")) {
+                console.log("block " + op.get("block_num") + " tx " + op.get("trx_in_block") + " op " + op.get("op_in_trx"));
 
-    //             // Get transaction in a block.
-    //             const tx = await btsjsws.Apis.instance().db_api().exec("get_transaction", [op.get("block_num"), op.get("trx_in_block")]);
-    //             console.log("test account tx:");
-    //             console.log(tx);
-    //         }
-    //     }
-    // }
+                // Get transaction in a block.
+                const tx = await btsjsws.Apis.instance().db_api().exec("get_transaction", [op.get("block_num"), op.get("trx_in_block")]);
+                console.log("test account tx:");
+                console.log(tx);
+            }
+        }
+    }
 
     
 
