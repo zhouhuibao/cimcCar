@@ -26,7 +26,11 @@ async function run() {
 
     // 使用DB API获取Nathan帐户。
     const nathan = await btsjsws.Apis.instance().db_api().exec("get_account_by_name", [nathanName]);
+    const info = await btsjsws.Apis.instance().db_api().exec("get_objects", [["1.2.17"]]);
     console.log("Nathan from DB API:");
+    const getDevKey = await btsjsws.Apis.instance().db_api().exec("get_dev_key", [["nathan"]]);
+    console.log(getDevKey);
+    return false
     // console.log(nathan);
 
     // 使用btsjs获取Nathan帐户。

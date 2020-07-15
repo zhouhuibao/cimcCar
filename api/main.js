@@ -8,10 +8,11 @@ const getHeadBlockNumber = require("../api/getHeadBlockNumber");
 const createAccount = require("../api/createAccount");
 const transactionBuilder = require("../api/transactionBuilder");
 const getBlockHash = require("../api/getBlockHash");
+const getAccuountById = require("../utils/getAccuountById");
 
-// getuser('nathan').then(res=>{
-//     console.log(res,'账户信息')
-// })
+getAccuountById('1.2.17').then(res=>{
+    console.log(res,'账户信息')
+})
 
 function main(req,response,next){
 

@@ -9,14 +9,15 @@ require("util").inspect.defaultOptions.depth = null;
 btsjsws.ChainConfig.networks["TixonshareTestnet"] = {
     core_asset: "TSH",
     address_prefix: "TSH",
-    chain_id: "3744350bd818ffe041784c0f9903bd97870f33b8d9cbc8dd7f3fa0c92947ea7f"
+    chain_id: "ed65e883f34d62fd9a036a37bf63ebdbabb20a72e2a6ee6ff1a22557a5c0e25c"
 }
- 
-// 默认的key
-const nathanName = "nathan";
-const nathanKeyWif = "5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3";
-const nathanKey = btsjs.PrivateKey.fromWif(nathanKeyWif);
 
+// ed65e883f34d62fd9a036a37bf63ebdbabb20a72e2a6ee6ff1a22557a5c0e25c
+// 默认的key
+
+const nathanName = "tixonshare";
+const nathanKeyWif = "5K4Cij8gxaafBUHGn9cRNK5To541Vb5hta4vcqBmES8A2EjgQhs";
+const nathanKey = btsjs.PrivateKey.fromWif(nathanKeyWif);
 
 
 async function createAccount(req, res, next) {
@@ -35,6 +36,7 @@ async function createAccount(req, res, next) {
         const isAccount = await getuser(params)  // 先查看账户是否已经注册
 
         if(isAccount === null){
+            
             // 连接到测试节点。
             await btsjsws.Apis.instance(configObj.ip, true).init_promise;
             await btsjs.ChainStore.init(false);
@@ -84,7 +86,6 @@ async function createAccount(req, res, next) {
                 active_key:keysAuths.owner.key_auths[0][0],
                 memo_key:keysAuths.options.memo_key
             }
-            console.log(accountKey)
 
             res.send({
                 content:accountKey
