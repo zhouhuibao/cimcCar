@@ -1,29 +1,35 @@
 const getBalance = require("../utils/getBalance");
 // const getAccuountByName = require("../utils/getAccuountByName");
-const { isEmpty } = require("../utils/utils");
+const { isEmpty,dataType } = require("../utils/utils");
 
 function getBalanceFun (req,response,next){
     const {params} = req.body
+
     if(!isEmpty(params)){
         response.send({
             content:'请传入账户名',
         })
         next()
     }else{
-        // getAccuountByName(params).then(res=>{
-        //     if(res=== null){
-        //         response.send({
-        //             content:'账户不存在'
-        //         })
-        //         next()
-        //     }else{
-                
-        //     }
-        // })
 
-        getBalance(params).then(res=>{
+        let name=params
+        if(dataType(params) === 'Array'){
+            name=params.join(',')
+        }
+
+        getBalance(name).then(res=>{
+            let amount = null
+            if(dataType(res) === 'Null'){
+                amount= null
+            }else{
+                if(res.length>0){
+                    amount = res[0].amount
+                }else{
+                    amount = 0
+                }
+            }
             response.send({
-                content:res,
+                amount:amount,
             })
             next()
         })

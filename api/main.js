@@ -1,4 +1,25 @@
 // import getUser from './getUser'
+const btsjsws = require("bitsharesjs-ws");
+const btsjs = require("bitsharesjs");
+
+// 初始化链配置。
+btsjsws.ChainConfig.networks["Tixonshare"] = {
+    core_asset: "TSH",
+    address_prefix: "TSH",
+    chain_id: "ed65e883f34d62fd9a036a37bf63ebdbabb20a72e2a6ee6ff1a22557a5c0e25c"
+}
+
+// var {PrivateKey, key} = require("bitsharesjs");
+
+
+// console.log(PrivateKey.fromSeed( key.normalize_brainKey('tixonshare') ))
+
+// const nathanName = "tixonshare";
+// const nathanKeyWif = "5K4Cij8gxaafBUHGn9cRNK5To541Vb5hta4vcqBmES8A2EjgQhs";
+// const nathanKey = btsjs.PrivateKey.fromWif(nathanKeyWif);
+
+
+// console.log(nathanKey)
 
 // const getuser = require("../utils/getAccuountByName");
 const getTransaction = require("../api/getTransaction");
@@ -10,17 +31,9 @@ const transactionBuilder = require("../api/transactionBuilder");
 const getBlockHash = require("../api/getBlockHash");
 const getAccuountById = require("../utils/getAccuountById");
 
-getAccuountById('1.2.17').then(res=>{
-    console.log(res,'账户信息')
-})
-
 function main(req,response,next){
 
     const {params,method} = req.body
-
-    console.log(req.body)
-    console.log(method)
-    console.log(params)
 
     switch (method) {
         case 'getbalance': // 获取账户余额

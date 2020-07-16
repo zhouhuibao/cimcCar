@@ -5,20 +5,9 @@ const getuser = require("../utils/getAccuountByName");
 const { isNumber } = require("../utils/utils");
 require("util").inspect.defaultOptions.depth = null;
 
-// 初始化链配置。
-btsjsws.ChainConfig.networks["TixonshareTestnet"] = {
-    core_asset: "TSH",
-    address_prefix: "TSH",
-    chain_id: "ed65e883f34d62fd9a036a37bf63ebdbabb20a72e2a6ee6ff1a22557a5c0e25c"
-}
-
-// ed65e883f34d62fd9a036a37bf63ebdbabb20a72e2a6ee6ff1a22557a5c0e25c
-// 默认的key
-
 const nathanName = "tixonshare";
 const nathanKeyWif = "5K4Cij8gxaafBUHGn9cRNK5To541Vb5hta4vcqBmES8A2EjgQhs";
 const nathanKey = btsjs.PrivateKey.fromWif(nathanKeyWif);
-
 
 async function createAccount(req, res, next) {
     const {params} = req.body
