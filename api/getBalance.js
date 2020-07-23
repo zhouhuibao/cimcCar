@@ -4,6 +4,7 @@ const { isEmpty,dataType } = require("../utils/utils");
 
 function getBalanceFun (req,response,next){
     const {params} = req.body
+    console.log('获取余额')
 
     if(!isEmpty(params)){
         response.send({

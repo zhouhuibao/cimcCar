@@ -1,27 +1,4 @@
-// import getUser from './getUser'
-const btsjsws = require("bitsharesjs-ws");
-const btsjs = require("bitsharesjs");
 
-// 初始化链配置。
-btsjsws.ChainConfig.networks["Tixonshare"] = {
-    core_asset: "TSH",
-    address_prefix: "TSH",
-    chain_id: "ed65e883f34d62fd9a036a37bf63ebdbabb20a72e2a6ee6ff1a22557a5c0e25c"
-}
-
-// var {PrivateKey, key} = require("bitsharesjs");
-
-
-// console.log(PrivateKey.fromSeed( key.normalize_brainKey('tixonshare') ))
-
-// const nathanName = "tixonshare";
-// const nathanKeyWif = "5K4Cij8gxaafBUHGn9cRNK5To541Vb5hta4vcqBmES8A2EjgQhs";
-// const nathanKey = btsjs.PrivateKey.fromWif(nathanKeyWif);
-
-
-// console.log(nathanKey)
-
-// const getuser = require("../utils/getAccuountByName");
 const getTransaction = require("../api/getTransaction");
 const getBalance = require("../api/getBalance");
 const getAccount = require("../api/getAccount");
@@ -29,7 +6,9 @@ const getHeadBlockNumber = require("../api/getHeadBlockNumber");
 const createAccount = require("../api/createAccount");
 const transactionBuilder = require("../api/transactionBuilder");
 const getBlockHash = require("../api/getBlockHash");
-const getAccuountById = require("../utils/getAccuountById");
+const getKeyReferences = require("../api/getKeyReferences");
+const isPublicKeyRegistered = require("../api/isPublicKeyRegistered");
+const getAccountByUserId = require("../api/getAccountById");
 
 function main(req,response,next){
 
@@ -45,6 +24,9 @@ function main(req,response,next){
         case 'getAccount': // 获取用户信息
                 getAccount(req,response,next)
             break;
+        case 'getAccountByUserId': // 根据用户id获取用户信息
+                getAccountByUserId(req,response,next)
+            break;
         case 'headBlockNumber': // 获取区块高度
                 getHeadBlockNumber(req,response,next)
             break;
@@ -57,6 +39,13 @@ function main(req,response,next){
         case 'getblockhash':  // 根据区块高度获取历史记录
                 getBlockHash(req,response,next)
             break;
+        case 'getKeyReferences':  // 根据key获取用户信息
+                getKeyReferences(req,response,next)
+            break;
+        case 'isPublicKeyRegistered':  // 判断地址是否存在
+                isPublicKeyRegistered(req,response,next)
+            break;
+            
 
         default:
             response.send({

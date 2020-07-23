@@ -8,14 +8,6 @@ require("util").inspect.defaultOptions.depth = null;
 const nathanName = "tixonshare";
 const nathanKeyWif = "5K4Cij8gxaafBUHGn9cRNK5To541Vb5hta4vcqBmES8A2EjgQhs";
 const tixonshareKey = btsjs.PrivateKey.fromWif(nathanKeyWif);
-// TSH8JVb3HmDJUTo2LVCAmYww6xkN3VNnF3iTshyozHz6zgJQmD7Uc
-// const fromAccountkeys = btsjs.Login.generateKeys('ronintest', getPassword('ronintest'))
-const fromAccountkeys = btsjs.Login.generateKeys('ronintest', '1231231312122')
-
-console.log(fromAccountkeys)
-
-
-// console.log(tixonshareKey,'123')
 
 
 async function transactionBuilder(req, res, next) {
@@ -62,17 +54,16 @@ async function transactionBuilder(req, res, next) {
             // const precision = Math.pow(10, coreAsset.get("precision"));
             const nonce = btsjs.TransactionHelper.unique_nonce_uint64();
 
-            const fromAccountkeys = btsjs.Login.generateKeys('ronintest', getPassword('ronintest'))
             const toAccountkeys = btsjs.Login.generateKeys(to, getPassword(to))
             
             const transctionAccount = await btsjs.FetchChain("getAccount", to);
             
             const memo_object = {
-                from: 'TSH8JVb3HmDJUTo2LVCAmYww6xkN3VNnF3iTshyozHz6zgJQmD7Uc',
+                from: tixonshareKey.toPublicKey().toString(),
                 to: toAccountkeys.pubKeys.memo,
                 nonce: nonce,
                 message: btsjs.Aes.encrypt_with_checksum(
-                    fromAccountkeys,
+                    tixonshareKey,
                     toAccountkeys.pubKeys.memo,
                     nonce,
                     "Some coins for test"
@@ -95,7 +86,7 @@ async function transactionBuilder(req, res, next) {
             });
 
             await Promise.all([tr.set_required_fees(), tr.update_head_block()]);
-            tr.add_signer(fromAccountkeys, 'TSH8JVb3HmDJUTo2LVCAmYww6xkN3VNnF3iTshyozHz6zgJQmD7Uc');
+            tr.add_signer(tixonshareKey, tixonshareKey.toPublicKey().toString());
             const transctionResult = await tr.broadcast();
             res.send({
                 content:transctionResult,

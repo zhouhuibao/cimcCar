@@ -1,12 +1,18 @@
 const btsjs = require("bitsharesjs");
 const btsjsws = require("bitsharesjs-ws");
 const configObj = require("../config");
-const { isNumber } = require("../utils/utils");
+const { isNumber,dataType } = require("../utils/utils");
 
 // 根据区块高度，获取交易信息 1279263
 
 function getTransaction(req,response,next){
-    const {params} = req.body
+    let {params} = req.body
+    
+    if(dataType(params) === 'Array'){
+        params = Number(params.join(','))
+    }
+    console.log('根据区块高度获取交易信息')
+    console.log(params)
 
     if(!isNumber(params)){
         response.send({
@@ -14,27 +20,25 @@ function getTransaction(req,response,next){
         })
         next()
     }else{
-        btsjsws.Apis.instance(configObj.ip, true).init_promise.then(res => {
-            try {
-                btsjsws.Apis.instance().db_api().exec("get_transaction", [params, 0]).then(res=>{
-                    response.send({
-                        content:res,
-                    })
-                    next()
-                }).catch(error=>{
-                    response.send({
-                        content:null,
-                    })
-                    next()
+        try {
+            btsjsws.Apis.instance().db_api().exec("get_transaction", [params, 0]).then(res=>{
+                response.send({
+                    content:res,
                 })
-            } catch (e) {
-                console.log("block " + params + " 不包含事务");
+                next()
+            }).catch(error=>{
                 response.send({
                     content:null,
                 })
                 next()
-            }
-        });
+            })
+        } catch (e) {
+            console.log("block " + params + " 不包含事务");
+            response.send({
+                content:null,
+            })
+            next()
+        }
     }
     
 } 

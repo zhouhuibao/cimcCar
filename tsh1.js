@@ -27,7 +27,7 @@ btsjsws.Apis.instance(configObj.ip, true).init_promise.then(res => {
         
         res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
             
-        next();
+            next();
             
     });
 
@@ -37,8 +37,8 @@ btsjsws.Apis.instance(configObj.ip, true).init_promise.then(res => {
     // app.use('/home',main);
     // app.use('/about',middlewareC);
 
-    app.listen(3000, function () {
-        console.log('listen 3000...');
+    app.listen(3001, function () {
+        console.log('listen 3001...');
     });
 
 })

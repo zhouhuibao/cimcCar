@@ -1,8 +1,7 @@
 const btsjsws = require("bitsharesjs-ws");
-const configObj = require("../config");
 const btsjs = require("bitsharesjs");
 const getuser = require("../utils/getAccuountByName");
-const { isNumber } = require("../utils/utils");
+const { isNumber,isEmpty,dataType } = require("../utils/utils");
 require("util").inspect.defaultOptions.depth = null;
 
 const nathanName = "tixonshare";
@@ -11,31 +10,33 @@ const nathanKey = btsjs.PrivateKey.fromWif(nathanKeyWif);
 
 async function createAccount(req, res, next) {
     const {params} = req.body
+    
+    let name =params
+    // let name =params.toLowerCase()
+
+    console.log('创建账户')
+
+    let reg = /^[a-zA-Z]\w{3,31}$/
 
 
-    if(params.length < 12){
+    if(!reg.test(name)){
         res.send({
-            content:'账户不能低于12位'
-        })
-    }else if(isNumber(params)){
-        res.send({
-            content:'账户不能为纯数字'
+            content:'账户名不能低于4位,只能以字母开头'
         })
     }else{
-        const isAccount = await getuser(params)  // 先查看账户是否已经注册
+        const isAccount = await getuser(name)  // 先查看账户是否已经注册
 
         if(isAccount === null){
             
             // 连接到测试节点。
-            await btsjsws.Apis.instance(configObj.ip, true).init_promise;
             await btsjs.ChainStore.init(false);
-
             const nathan = await btsjsws.Apis.instance().db_api().exec("get_account_by_name", [nathanName]);
 
             let tr = new btsjs.TransactionBuilder();
 
-            const testAccountName = params;
-            const testKeys = btsjs.Login.generateKeys(testAccountName, testAccountName);
+            const password = name.length>12 ? name : name+"_tsh2020"
+            const testKeys = btsjs.Login.generateKeys(name, password);
+
             tr.add_type_operation("account_create", {
                 fee: {
                     amount: 0,
@@ -44,7 +45,7 @@ async function createAccount(req, res, next) {
                 registrar: nathan.id,
                 referrer: nathan.id,
                 referrer_percent: 50,
-                name: testAccountName,
+                name: name,
                 owner: {
                     weight_threshold: 1,
                     account_auths: [],
@@ -65,8 +66,11 @@ async function createAccount(req, res, next) {
                     votes: []
                 }
             });
+
             await Promise.all([tr.set_required_fees(), tr.update_head_block()]);
+
             tr.add_signer(nathanKey, nathanKey.toPublicKey().toString());
+       
             let accountResult = await tr.broadcast();
 
             const keysAuths=accountResult[0].trx.operations[0][1]

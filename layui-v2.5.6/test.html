@@ -27,6 +27,9 @@
 					<div class="layui-col-xs2">
 						<input type="text" name="" class="account layui-input" value="" placeholder="输入账户名" />
 					</div>
+					<div class="layui-col-xs2">
+						<input type="text" name="" class="password layui-input" value="" placeholder="输入账户密码" />
+					</div>
 					
 					<div class="layui-col-xs3">
 						<button type="button" name="createAccount" class="layui-btn">创建</button>
@@ -36,6 +39,19 @@
 				<hr>
 			</div>
 			
+			<div class="item">
+				<p>根据公钥获取用户信息</p>
+				<div class="layui-row">
+					<div class="layui-col-xs2">
+						<input type="text" name="" class="key layui-input" value="" placeholder="输入用户" />
+					</div>
+					
+					<div class="layui-col-xs3">
+						<button type="button" name="getKeyReferences" class=" layui-btn">获取</button>
+					</div>
+				</div>
+				<hr>
+			</div>
 			<div class="item">
 				<p>获取余额</p>
 				<div class="layui-row">
@@ -49,6 +65,20 @@
 				</div>
 				<hr>
 			</div>
+			<div class="item">
+				<p>判断公钥地址是否存在</p>
+				<div class="layui-row">
+					<div class="layui-col-xs2">
+						<input type="text" name="" class="publicKey layui-input" value="" placeholder="输入公钥地址" />
+					</div>
+					
+					<div class="layui-col-xs3">
+						<button type="button" name="isPublicKeyRegistered" class=" layui-btn">获取</button>
+					</div>
+				</div>
+				<hr>
+			</div>
+			
 			<div class="item">
 				<p>根据区块高度获取交易信息</p>
 				<div class="layui-row">
@@ -89,6 +119,22 @@
 				</div>
 				<hr>
 			</div>
+			
+			<div class="item">
+				<p>根据账户ID获取账户信息</p>
+				<div class="layui-row">
+					<div class="layui-col-xs2">
+						<input type="text" name="" class="userId layui-input" value="1.2.35" placeholder="输入账户ID" />
+					</div>
+					
+					<div class="layui-col-xs3">
+						<button type="button" name="getAccountByUserId" class=" layui-btn">获取</button>
+					</div>
+				</div>
+				<hr>
+			</div>
+			
+			
 			
 			<div class="item">
 				<p>转账</p>
@@ -145,9 +191,13 @@
 			case 'getTransaction':
 				data.params = $(".height").val()
 				break;
+			case 'isPublicKeyRegistered':
+				data.params = $(".publicKey").val()
+				break;
 				
 	  		case 'transactionBuilder':
 				data.params={
+					from:$(".zzr").val(),
 					to:$(".skr").val(),
 					amount:$(".je").val()
 				}
@@ -156,6 +206,14 @@
 			case 'getAccount':
 				data.params =$(".userInfo").val()
 				break;
+			case 'getAccountByUserId':
+				data.params =$(".userId").val()
+				break;
+			case 'getKeyReferences':
+				data.params =$(".key").val()
+				break;
+				
+				
 	  		case 'headBlockNumber':
 			
 	  			break;
@@ -164,7 +222,13 @@
 			
 				break;
 	  		case 'createAccount':
-	  			data.params = $(".account").val()
+	  	// 		data.params = {
+				// 	name:$(".account").val(),
+				// 	password:$(".password").val()
+				// }
+				
+				data.params =$(".account").val()
+				
 				console.log(data.params.length)
 	  		// 	if(data.params.length < 12){
 	  		// 		layer.msg('不能低于12位');
@@ -175,7 +239,10 @@
 	  		default:
 	  			break;
 	  	}
-	  	$.post('http://192.168.0.108:3000',data,function(res){
+		
+		// http://192.168.0.108:3001
+		// http://47.98.193.148/tsh/
+	  	$.post('http://192.168.0.108:3001',data,function(res){
 	  		console.log(res)
 	  	})
 	  })

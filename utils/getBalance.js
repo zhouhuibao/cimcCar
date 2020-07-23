@@ -5,14 +5,11 @@ const configObj = require("../config");
 // 获取余额
 function getBalance(account){
     return new Promise((resolve,reject)=>{
-        btsjsws.Apis.instance(configObj.ip, true).init_promise.then(res => {
-
-            btsjsws.Apis.instance().db_api().exec("get_account_balances", [account,[]]).then(balance => {
-                resolve(balance)
-            }).catch(error=>{
-                resolve(null)
-            })
-        });
+        btsjsws.Apis.instance().db_api().exec("get_account_balances", [account,[]]).then(balance => {
+            resolve(balance)
+        }).catch(error=>{
+            resolve(null)
+        })
     })
 }
 

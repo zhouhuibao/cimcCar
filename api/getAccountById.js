@@ -1,17 +1,17 @@
-const getAccuountByName = require("../utils/getAccuountByName");
+const getAccuountById = require("../utils/getAccuountById");
 const { isEmpty } = require("../utils/utils");
 
-function getAccount (req,response,next){
-    console.log('获取账户信息')
+function getAccuountByIds (req,response,next){
+    console.log('根据账户ID获取账户信息')
 
     const {params} = req.body
     if(!isEmpty(params)){
         response.send({
-            content:'请传入账户名',
+            content:'请传入账户名ID',
         })
         next()
     }else{
-        getAccuountByName(params).then(res=>{
+        getAccuountById(params).then(res=>{
             if(res === null){
                 response.send({
                     content:'账户不存在',
@@ -19,7 +19,6 @@ function getAccount (req,response,next){
             }else{
                 response.send({
                     content:res,
-                    msg:'main222'
                 })
             }
             next()
@@ -28,4 +27,4 @@ function getAccount (req,response,next){
     
 }
 
-module.exports = getAccount
+module.exports = getAccuountByIds
