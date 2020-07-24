@@ -30,18 +30,10 @@ const isNumber = number => {
     return num
 }
 
-// 获取密码
-const getPassword = name => {
-    if(name === 'tixonshare'){
-        return  'CNKEjEB36QYuQ7s'  
-    }
-    return name.length > 12 ? name : name+"_tsh2020"
-}
 
 
 module.exports={
     dataType,
     isNumber,
     isEmpty,
-    getPassword
 }

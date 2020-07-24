@@ -1,11 +1,8 @@
 const btsjsws = require("bitsharesjs-ws");
 const btsjs = require("bitsharesjs");
 const getuser = require("../utils/getAccuountByName");
-const getPassword = require("../utils/getPassword");
-
-
 const getBalance = require("../utils/getBalance");
-const { isEmpty,dataType } = require("../utils/utils");
+const { isEmpty,dataType,getPassword } = require("../utils/utils");
 require("util").inspect.defaultOptions.depth = null;
 
 const nathanName = "tixonshare";
@@ -20,21 +17,15 @@ async function transactionBuilder(req, res, next) {
 
     // let {to,amount}=params
 
-    let from=params.from
     let to=params.to
     let amount=params.amount
 
     if(dataType(params) === 'Array'){
-        from = params[0].toLowerCase()
-        to = params[1].toLowerCase()
-        amount = params[2]
+        to = params[0].toLowerCase()
+        amount = params[1]
     }
-    if(!isEmpty(from)){
-        res.send({
-            content:'转账人不能为空',
-            msg:''
-        })
-    }else if(!isEmpty(to)){
+
+    if(!isEmpty(to)){
         res.send({
             content:'收款人不能为空',
             msg:''
@@ -46,14 +37,8 @@ async function transactionBuilder(req, res, next) {
         })
     }else{
 
-        // const account = await getuser(to)
-        // const account = await getuser(to)
-        if(await getuser(from) === null){
-            res.send({
-                content:'转账人不存在',
-                msg:''
-            })
-        }else if(await getuser(to) === null){
+        const account = await getuser(to)
+        if(account === null){
             res.send({
                 content:'收款人不存在',
                 msg:''
@@ -61,55 +46,37 @@ async function transactionBuilder(req, res, next) {
         }else{
             await btsjs.ChainStore.init(false);
 
-            const formAccount = await btsjsws.Apis.instance().db_api().exec("get_account_by_name", [from]);
+            const nathan = await btsjsws.Apis.instance().db_api().exec("get_account_by_name", [nathanName]);
 
             // const chainProperties = await btsjsws.Apis.instance().db_api().exec("get_global_properties", []);
             const coreAsset = await btsjs.FetchChain("getAsset", "TSH");
             let tr = new btsjs.TransactionBuilder();
             // const precision = Math.pow(10, coreAsset.get("precision"));
             const nonce = btsjs.TransactionHelper.unique_nonce_uint64();
-            
-            const fromAccountkeys = await getPassword(from)
-            const toAccountkeys = await getPassword(to)
 
-            if(!fromAccountkeys){
-                res.send({
-                    content:'转账人密码错误',
-                    msg:''
-                })    
-                return false
-            }
-            
-            if(!toAccountkeys){
-                res.send({
-                    content:'收款人密码错误',
-                    msg:''
-                })    
-                return false
-            }
+            const toAccountkeys = btsjs.Login.generateKeys(to, 'ronintest_tsh2020')
+            // const toAccountkeys = btsjs.Login.generateKeys(to, 'ronintest_tsh2020'+ getPassword(to))
             
             const transctionAccount = await btsjs.FetchChain("getAccount", to);
             
             const memo_object = {
-                from:fromAccountkeys.pubKeys.active,
+                from: tixonshareKey.toPublicKey().toString(),
                 to: toAccountkeys.pubKeys.memo,
                 nonce: nonce,
                 message: btsjs.Aes.encrypt_with_checksum(
-                    fromAccountkeys.privKeys.active,
+                    tixonshareKey,
                     toAccountkeys.pubKeys.memo,
                     nonce,
                     "Some coins for test"
                 )
             }
-            
-            console.log(3)
 
             tr.add_type_operation("transfer", {
                 fee: {
                     amount: 0,
                     asset_id: coreAsset.get("id")
                 },
-                from: formAccount.id,
+                from: nathan.id,
                 to: transctionAccount.get("id"),
                 amount: {
                     amount:amount || 0,
@@ -120,15 +87,12 @@ async function transactionBuilder(req, res, next) {
             });
 
             await Promise.all([tr.set_required_fees(), tr.update_head_block()]);
-            tr.add_signer(fromAccountkeys.privKeys.active, fromAccountkeys.pubKeys.active);
+            tr.add_signer(tixonshareKey, tixonshareKey.toPublicKey().toString());
             const transctionResult = await tr.broadcast();
-
             res.send({
                 content:transctionResult,
                 msg:''
             })
-            
-            
 
         }
 
