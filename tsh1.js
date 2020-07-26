@@ -1,17 +1,20 @@
 var express = require('express');
 let bodyParser = require('body-parser');
-const configObj = require("./config");
+const configObj = require("./config").config;
 const btsjsws = require("bitsharesjs-ws");
 const btsjs = require("bitsharesjs");
 
+const {ip,titile,chain_id} = configObj
+
+
 // 初始化链配置。
-btsjsws.ChainConfig.networks["Tixonshare"] = {
+btsjsws.ChainConfig.networks[titile] = {
     core_asset: "TSH",
     address_prefix: "TSH",
-    chain_id: "ed65e883f34d62fd9a036a37bf63ebdbabb20a72e2a6ee6ff1a22557a5c0e25c"
+    chain_id
 }
 
-btsjsws.Apis.instance(configObj.ip, true).init_promise.then(res => {
+btsjsws.Apis.instance(ip, true).init_promise.then(res => {
 
     let main = require('./api/main');
 
@@ -27,7 +30,7 @@ btsjsws.Apis.instance(configObj.ip, true).init_promise.then(res => {
         
         res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
             
-            next();
+        next();
             
     });
 

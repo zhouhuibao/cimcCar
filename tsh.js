@@ -4,12 +4,14 @@ const configObj = require("./config");
 const btsjsws = require("bitsharesjs-ws");
 const btsjs = require("bitsharesjs");
 
+
 // 初始化链配置。
 btsjsws.ChainConfig.networks["Tixonshare"] = {
     core_asset: "TSH",
     address_prefix: "TSH",
     chain_id: "ed65e883f34d62fd9a036a37bf63ebdbabb20a72e2a6ee6ff1a22557a5c0e25c"
 }
+
 
 btsjsws.Apis.instance(configObj.ip, true).init_promise.then(res => {
 

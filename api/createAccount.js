@@ -1,11 +1,15 @@
 const btsjsws = require("bitsharesjs-ws");
 const btsjs = require("bitsharesjs");
 const getuser = require("../utils/getAccuountByName");
+const configObj = require("../config").config;
 const { isNumber,isEmpty,dataType } = require("../utils/utils");
 require("util").inspect.defaultOptions.depth = null;
 
-const nathanName = "tixonshare";
-const nathanKeyWif = "5K4Cij8gxaafBUHGn9cRNK5To541Vb5hta4vcqBmES8A2EjgQhs";
+
+const nathanName = configObj.name;
+const nathanKeyWif = configObj.key;
+
+
 const nathanKey = btsjs.PrivateKey.fromWif(nathanKeyWif);
 
 async function createAccount(req, res, next) {
@@ -25,17 +29,24 @@ async function createAccount(req, res, next) {
         })
     }else{
         const isAccount = await getuser(name)  // 先查看账户是否已经注册
-
+        console.log(isAccount)
+        console.log(name)
         if(isAccount === null){
+        console.log(1)
             
             // 连接到测试节点。
             await btsjs.ChainStore.init(false);
             const nathan = await btsjsws.Apis.instance().db_api().exec("get_account_by_name", [nathanName]);
+            console.log(2)
+            console.log(nathan)
+            console.log(nathan.id)
 
             let tr = new btsjs.TransactionBuilder();
 
             const password = name.length>12 ? name : name+"_tsh2020"
             const testKeys = btsjs.Login.generateKeys(name, password);
+            console.log(testKeys)
+            
 
             tr.add_type_operation("account_create", {
                 fee: {
@@ -66,12 +77,19 @@ async function createAccount(req, res, next) {
                     votes: []
                 }
             });
+            console.log(4)
 
             await Promise.all([tr.set_required_fees(), tr.update_head_block()]);
+            console.log(5)
 
             tr.add_signer(nathanKey, nathanKey.toPublicKey().toString());
+
+            console.log(6)
+         
        
             let accountResult = await tr.broadcast();
+            console.log(7)
+            console.log(accountResult)
 
             const keysAuths=accountResult[0].trx.operations[0][1]
             const accountKey={
@@ -79,6 +97,7 @@ async function createAccount(req, res, next) {
                 active_key:keysAuths.owner.key_auths[0][0],
                 memo_key:keysAuths.options.memo_key
             }
+            console.log(8)
 
             res.send({
                 content:accountKey
