@@ -44,7 +44,6 @@ async function transactionBuilder(req, res, next) {
                 msg:''
             })
         }else{
-            await btsjs.ChainStore.init(false);
 
             const nathan = await btsjsws.Apis.instance().db_api().exec("get_account_by_name", [nathanName]);
 

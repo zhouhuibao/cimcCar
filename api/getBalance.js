@@ -17,9 +17,13 @@ function getBalanceFun (req,response,next){
         if(dataType(params) === 'Array'){
             name=params.join(',')
         }
+        name =name.toLowerCase()
 
         getBalance(name).then(res=>{
             let amount = null
+
+            // console.log(res)
+
             if(dataType(res) === 'Null'){
                 amount= null
             }else{

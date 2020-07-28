@@ -12,7 +12,7 @@ function getTransaction(req,response,next){
         params = Number(params.join(','))
     }
     console.log('根据区块高度获取交易信息')
-    console.log(params)
+    // console.log(params)
 
     if(!isNumber(params)){
         response.send({
@@ -33,7 +33,7 @@ function getTransaction(req,response,next){
                 next()
             })
         } catch (e) {
-            console.log("block " + params + " 不包含事务");
+            // console.log("block " + params + " 不包含事务");
             response.send({
                 content:null,
             })

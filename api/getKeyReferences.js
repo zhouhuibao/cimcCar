@@ -17,8 +17,7 @@ function getKeyReferences(req,response,next){
                 response.send({
                     content:'账户不存在',
                 })
-            }else{
-                console.log(userInfo)
+            }else{ 
                 response.send({
                     content:userInfo[0].name,
                     msg:'main'

@@ -28,6 +28,7 @@ function getPassword(name){
 
     return new Promise((resolve, reject) => {
         btsjsws.Apis.instance().db_api().exec("get_key_references", [[active]]).then(res=>{
+            console.log(res)
             const [[accountId]] = res
             if(dataType(accountId) === 'Undefined'){
                 resolve(false)
@@ -47,6 +48,7 @@ function getPassword(name){
                 })
             }
         }).catch(error=>{
+            console.log(error)
             resolve(false)
         })
     })

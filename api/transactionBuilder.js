@@ -1,11 +1,11 @@
 const btsjsws = require("bitsharesjs-ws");
 const btsjs = require("bitsharesjs");
+const getBalance = require("../utils/getBalance");
 const getuser = require("../utils/getAccuountByName");
 const getPassword = require("../utils/getPassword");
 const configObj = require("../config").config;
 
 
-const getBalance = require("../utils/getBalance");
 const { isEmpty,dataType } = require("../utils/utils");
 require("util").inspect.defaultOptions.depth = null;
 
@@ -22,6 +22,9 @@ async function transactionBuilder(req, res, next) {
     let fromName=params.from
     let toName =params.to
     let amount=params.amount
+
+
+    let fromAmount = 0
 
     if(dataType(params) === 'Array'){
         fromName = params[0].toLowerCase()
@@ -45,6 +48,18 @@ async function transactionBuilder(req, res, next) {
         })
     }else{
 
+        // 获取转账人余额
+        const balance= await getBalance(fromName)
+        if(dataType(balance) !== 'Null'){
+            if(balance.length>0){
+                fromAmount = balance[0].amount
+            }else{
+                fromAmount = 0
+            }
+        }
+        console.log(fromName,toName,fromAmount,amount)
+
+
         if(await getuser(fromName) === null){
             res.send({
                 content:'转账人不存在',
@@ -55,8 +70,14 @@ async function transactionBuilder(req, res, next) {
                 content:'收款人不存在',
                 msg:''
             })
-        }else{
-            await btsjs.ChainStore.init(false);
+        }else if(fromAmount < 2105468+Number(amount)){
+            res.send({
+                content:'转账人余额不足',
+                msg:''
+            })
+        } else{
+
+            // tsh7616 tixonshare 33000007
 
             const formAccount = await btsjsws.Apis.instance().db_api().exec("get_account_by_name", [fromName]);
 
@@ -68,6 +89,7 @@ async function transactionBuilder(req, res, next) {
             
             const fromAccountkeys = await getPassword(fromName)
             const toAccountkeys = await getPassword(toName)
+
 
             if(!fromAccountkeys){
                 res.send({
@@ -83,15 +105,14 @@ async function transactionBuilder(req, res, next) {
                     msg:''
                 })    
                 return false
-            }
+            } 
             
             const transctionAccount = await btsjs.FetchChain("getAccount", toName);
 
-            console.log(toAccountkeys.pubKeys)
 
             const fromPubKeys =  configObj.name === fromName ? fromAccountkeys.toPublicKey().toString() : fromAccountkeys.pubKeys.active
-            const toPubKeys =  configObj.name === toName ? toAccountkeys.toPublicKey().toString() : toAccountkeys.pubKeys.memo
-            
+            const toPubKeys =  configObj.name === toName ? toAccountkeys.toPublicKey().toString() : toAccountkeys.pubKeys.active
+            // memo
             const formActiveKey = configObj.name === fromName ? fromAccountkeys : fromAccountkeys.privKeys.active
 
             const memo_object = {
@@ -106,8 +127,6 @@ async function transactionBuilder(req, res, next) {
                 )
             }
             
-            console.log('3..1')
-
             tr.add_type_operation("transfer", {
                 fee: {
                     amount: 0,
@@ -123,9 +142,14 @@ async function transactionBuilder(req, res, next) {
                 memo: memo_object
             });
 
+            console.log(6)
+
             await Promise.all([tr.set_required_fees(), tr.update_head_block()]);
+            console.log(7)
             tr.add_signer(formActiveKey, fromPubKeys);
+            console.log(8)
             const transctionResult = await tr.broadcast();
+            console.log(9)
 
             res.send({
                 content:transctionResult,
