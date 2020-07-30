@@ -165,6 +165,15 @@
 				<hr>
 			</div>
 			
+			<div class="item">
+				<div class="layui-row">
+					<div class="layui-col-xs3">
+						<button type="button" name="test" class="layui-btn">测试</button>
+					</div>
+				</div>
+				<hr>
+			</div>
+			
 			
 			
 		</div>
@@ -176,6 +185,8 @@
 	layui.use(['layer', 'form'], function(){
 	  var layer = layui.layer
 	  ,$ = layui.$;
+	  
+	  
 	  
 	
 	  
@@ -240,11 +251,23 @@
 	  			break;
 	  	}
 		
-		// http://192.168.0.112:3001
-		// http://47.98.193.148/tsh/
-	  	$.post('http://192.168.0.112:3100',data,function(res){
-	  		console.log(res)
-	  	})
+		
+		// const path = "http://192.168.0.112:3000"
+		const path = "http://47.98.193.148/tsh/"
+		
+		
+		
+		if(type == 'test'){
+			$.get('http://192.168.0.112:4001',function(res){
+				console.log(res)
+			})
+		}else{
+			$.post(path,data,function(res){
+				console.log(res)
+			})
+		}
+			
+	  	
 	  })
 	  
 	});

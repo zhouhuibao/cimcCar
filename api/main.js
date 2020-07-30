@@ -12,6 +12,8 @@ const getAccountByUserId = require("../api/getAccountById");
 
 function main(req,response,next){
 
+    console.log(new Date().toLocaleString() )
+
     const {params,method} = req.body
 
     switch (method) {

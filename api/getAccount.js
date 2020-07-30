@@ -26,7 +26,7 @@ function getAccount (req,response,next){
                 }
                 response.send({
                     content:accountKey,
-                    msg:'main222'
+                    msg:'main2221'
                 })
             }
             next()
